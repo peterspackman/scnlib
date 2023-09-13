@@ -48,7 +48,7 @@
 #define SCN_NOMINMAX_DEFINED 0
 #endif
 
-#include <Windows.h>
+#include <windows.h>
 
 #if !SCN_NOMINMAX_DEFINED
 #undef NOMINMAX
@@ -81,8 +81,7 @@ namespace scn {
                 return;
             }
 
-            struct stat s {
-            };
+            struct stat s {};
             int status = fstat(fd, &s);
             if (status == -1) {
                 close(fd);

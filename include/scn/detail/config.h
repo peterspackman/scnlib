@@ -112,6 +112,12 @@
 #define SCN_WINDOWS 0
 #endif
 
+#if (defined(__MINGW32__) || defined(__MINGW64__))
+#define SCN_MINGW 1
+#else
+#define SCN_MINGW 0
+#endif
+
 #ifdef _MSVC_LANG
 #define SCN_MSVC_LANG _MSVC_LANG
 #else
@@ -295,7 +301,8 @@
     (SCN_MSVC >= SCN_COMPILER(19, 11, 0) && SCN_MSVC_LANG >= SCN_STD_17) || \
     ((SCN_GCC >= SCN_COMPILER(7, 0, 0) ||                                   \
       SCN_INTEL >= SCN_COMPILER(18, 0, 0)) &&                               \
-     __cplusplus >= SCN_STD_17) && !SCN_DOXYGEN
+     __cplusplus >= SCN_STD_17) &&                                          \
+        !SCN_DOXYGEN
 #define SCN_NODISCARD [[nodiscard]]
 #else
 #define SCN_NODISCARD /*nodiscard*/
@@ -318,7 +325,7 @@
 
 #if defined(_GLIBCXX_RELEASE) && __cplusplus >= SCN_STD_17
 #define SCN_HAS_INTEGER_CHARCONV (_GLIBCXX_RELEASE >= 9)
-#define SCN_HAS_FLOAT_CHARCONV   (_GLIBCXX_RELEASE >= 11)
+#define SCN_HAS_FLOAT_CHARCONV   (_GLIBCXX_RELEASE >= 11) && !(SCN_MINGW)
 #elif SCN_MSVC >= SCN_COMPILER(19, 14, 0)
 #define SCN_HAS_INTEGER_CHARCONV 1
 #define SCN_HAS_FLOAT_CHARCONV   (SCN_MSVC >= SCN_COMPILER(19, 21, 0))
@@ -449,8 +456,7 @@
 
 #define SCN_MOVE(x) \
     static_cast<    \
-        typename ::scn::detail::remove_reference \
-        <decltype(x)>::type&&>(x)
+        typename ::scn::detail::remove_reference<decltype(x)>::type&&>(x)
 #define SCN_FWD(x)          static_cast<decltype(x)&&>(x)
 #define SCN_DECLVAL(T)      static_cast<T (*)()>(nullptr)()
 
